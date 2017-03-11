@@ -1,0 +1,6 @@
+{
+	"host": "google.com",
+    "brokerUrl": "mqtt://test.mosquitto.org",
+    "overallTopic": "OnlineState/Overall",
+    "detailTopic": "OnlineState/Detail"
+}
