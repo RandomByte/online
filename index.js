@@ -31,6 +31,7 @@ function probe() {
 		let waitTime = 100;
 
 		if (!alive) {
+			publishDetailState("Ping failed");
 			if (deadCount < deadThreshold) {
 				deadCount++;
 			} else {
@@ -40,6 +41,7 @@ function probe() {
 				looksAliveTimestamp = 0;
 			}
 		} else {
+			publishDetailState("Ping succeeded");
 			aliveCount++;
 		}
 		let aliveCountState = `Alive count: ${aliveCount} | Dead count buffer: ${deadCount}/${deadThreshold}`;
