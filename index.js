@@ -28,6 +28,8 @@ function probeHost(hostname) {
 
 function probe() {
 	probeHost(config.host).then(function(alive) {
+		let waitTime = 100;
+
 		if (!alive) {
 			if (deadCount < deadThreshold) {
 				deadCount++;
@@ -62,13 +64,14 @@ function probe() {
 				console.log(onlineState);
 				publishDetailState(onlineState);
 				publishOverallState("Online");
+				waitTime = 5000;
 			} else {
 				let assuranceState = `Appears online: assurance in ${(isAliveTimespan - diff) / 1000}sec...`;
 				console.log(assuranceState);
 				publishDetailState(assuranceState);
 			}
 		}
-		setTimeout(probe, 100);
+		setTimeout(probe, waitTime);
 	});
 }
 
