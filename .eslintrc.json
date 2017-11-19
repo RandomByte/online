@@ -1,7 +1,9 @@
 {
     "env": {
-        "node": true,
-        "browser": true
+        "node": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 6
     },
     "extends": "google",
     "rules": {
@@ -24,9 +26,8 @@
         "no-negated-condition": "off",
         "require-jsdoc": "off",
         "no-mixed-requires": "off",
-        "max-len": ["warn", 120]
-    },
-    "globals": {
-        "jQuery": true
+        "max-len": ["warn", 120],
+        "no-tabs": 0,
+        "comma-dangle": 0
     }
 }

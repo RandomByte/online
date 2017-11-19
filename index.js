@@ -1,6 +1,6 @@
 const ping = require("ping");
 const mqtt = require("mqtt");
-const debug = require("debug")("online");
+const debug = require("debug")("mqtt-online-check");
 const config = require("./config.json");
 const deadThreshold = 20;
 const isAliveTimespan = 300000;
