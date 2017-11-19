@@ -9,6 +9,7 @@
   "author": "Merlin Beutlberger",
   "license": "MIT",
   "dependencies": {
+    "debug": "^3.1.0",
     "mqtt": "^2.14.0",
     "ping": "^0.2.2"
   },
