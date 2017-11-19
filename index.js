@@ -3,10 +3,14 @@ const mqtt = require("mqtt");
 const debug = require("debug")("mqtt-online-check");
 const config = require("./config.json");
 const deadThreshold = 20;
-const isAliveTimespan = 300000;
+const appearsAliveThreshold = 10; // 10 roundtrips have been successful
+const isAliveTimespan = 300000; // Online for 5 minutes
+const waitTimeDefault = 1000; // wait one sec between rountrips
+const waitTimeWhenOnline = isAliveTimespan; // Wait 5 min if already pretty sure to be online
 let deadCount = 0;
 let aliveCount = 0;
 let looksAliveTimestamp = 0;
+let lastState;
 
 /* Check config */
 if (!config.host || !config.brokerUrl || !config.overallTopic || !config.detailTopic) {
@@ -29,7 +33,7 @@ function probeHost(hostname) {
 
 function probe() {
 	probeHost(config.host).then(function(alive) {
-		let waitTime = 100;
+		let waitTime = waitTimeDefault;
 
 		if (!alive) {
 			publishDetailState("Ping failed");
@@ -49,7 +53,7 @@ function probe() {
 		debug(aliveCountState);
 		publishDetailState(aliveCountState);
 
-		if (aliveCount > 100) {
+		if (aliveCount > appearsAliveThreshold) {
 			if (debug.enabled) {
 				let appearsOnlineState = "Appears online";
 				debug(appearsOnlineState);
@@ -69,7 +73,7 @@ function probe() {
 				debug(onlineState);
 				publishDetailState(onlineState);
 				publishOverallState("Online");
-				waitTime = 5000;
+				waitTime = waitTimeWhenOnline;
 			} else {
 				let assuranceState = `Appears online: assurance in ${(isAliveTimespan - diff) / 1000}sec...`;
 				debug(assuranceState);
@@ -81,8 +85,14 @@ function probe() {
 }
 
 function publishOverallState(state) {
+	if (lastState === state) {
+		// Do not send same state repetitively
+		return;
+	}
+	lastState = state;
 	mqttClient.publish(config.overallTopic, state, {
-		qos: 2 // must arrive and must arrive exactly once - also ensures order
+		qos: 2, // must arrive and must arrive exactly once - also ensures order
+		retain: true
 	});
 }
 
