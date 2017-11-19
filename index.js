@@ -50,9 +50,11 @@ function probe() {
 		publishDetailState(aliveCountState);
 
 		if (aliveCount > 100) {
-			let appearsOnlineState = "Appears online";
-			debug(appearsOnlineState);
-			publishOverallState(appearsOnlineState);
+			if (debug.enabled) {
+				let appearsOnlineState = "Appears online";
+				debug(appearsOnlineState);
+				publishOverallState(appearsOnlineState);
+			}
 			if (!looksAliveTimestamp) {
 				debug("Setting timestamp");
 				looksAliveTimestamp = new Date().getTime();
@@ -85,6 +87,9 @@ function publishOverallState(state) {
 }
 
 function publishDetailState(state) {
+	if (!debug.enabled) {
+		return;
+	}
 	mqttClient.publish(config.detailTopic, state, {
 		qos: 2 // must arrive and must arrive exactly once - also ensures order
 	});
