@@ -1,5 +1,6 @@
 const ping = require("ping");
 const mqtt = require("mqtt");
+const debug = require("debug")("online");
 const config = require("./config.json");
 const deadThreshold = 20;
 const isAliveTimespan = 300000;
@@ -21,7 +22,7 @@ console.log("Host: " + config.host);
 function probeHost(hostname) {
 	return ping.promise.probe(hostname).then(function(res) {
 		let status = res.alive ? `alive (${res.time}ms)` : "dead";
-		console.log(`${res.host} (${res.numeric_host}) is: ${status}`);
+		debug(`${res.host} (${res.numeric_host}) is: ${status}`);
 		return res.alive;
 	});
 }
@@ -45,15 +46,15 @@ function probe() {
 			aliveCount++;
 		}
 		let aliveCountState = `Alive count: ${aliveCount} | Dead count buffer: ${deadCount}/${deadThreshold}`;
-		console.log(aliveCountState);
+		debug(aliveCountState);
 		publishDetailState(aliveCountState);
 
 		if (aliveCount > 100) {
 			let appearsOnlineState = "Appears online";
-			console.log(appearsOnlineState);
+			debug(appearsOnlineState);
 			publishOverallState(appearsOnlineState);
 			if (!looksAliveTimestamp) {
-				console.log("Setting timestamp");
+				debug("Setting timestamp");
 				looksAliveTimestamp = new Date().getTime();
 			}
 		}
@@ -63,13 +64,13 @@ function probe() {
 
 			if (diff > isAliveTimespan) {
 				let onlineState = `Is online: ${diff / 1000 / 60}min passed without reset`;
-				console.log(onlineState);
+				debug(onlineState);
 				publishDetailState(onlineState);
 				publishOverallState("Online");
 				waitTime = 5000;
 			} else {
 				let assuranceState = `Appears online: assurance in ${(isAliveTimespan - diff) / 1000}sec...`;
-				console.log(assuranceState);
+				debug(assuranceState);
 				publishDetailState(assuranceState);
 			}
 		}
