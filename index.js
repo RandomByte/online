@@ -1,7 +1,16 @@
 const ping = require("ping");
 const mqtt = require("mqtt");
 const debug = require("debug")("mqtt-online-check");
-const config = require("./config.json");
+
+const host = process.env.MQTT_ONLINE_CHECK_HOSTNAME;
+const mqttBroker = process.env.MQTT_ONLINE_CHECK_MQTT_BROKER;
+const mqttTopic = process.env.MQTT_ONLINE_CHECK_MQTT_TOPIC;
+
+if (!host || !mqttBroker || !mqttTopic) {
+	console.log("Configuration environment variable(s) missing");
+	process.exit(1);
+}
+
 const deadThreshold = 20;
 const appearsAliveThreshold = 10; // 10 roundtrips have been successful
 const isAliveTimespan = 300000; // Online for 5 minutes
@@ -12,16 +21,10 @@ let aliveCount = 0;
 let looksAliveTimestamp = 0;
 let lastState;
 
-/* Check config */
-if (!config.host || !config.brokerUrl || !config.overallTopic || !config.detailTopic) {
-	console.log("There's something missing in your config.json, please refer to config.example.json for an example");
-	process.exit(1);
-}
+const mqttClient = mqtt.connect(mqttBroker);
 
-const mqttClient = mqtt.connect(config.brokerUrl);
-
-console.log("MQTT Broker: " + config.brokerUrl);
-console.log("Host: " + config.host);
+console.log("MQTT Broker: " + mqttBroker);
+console.log("Host: " + host);
 
 function probeHost(hostname) {
 	return ping.promise.probe(hostname).then(function(res) {
@@ -32,35 +35,44 @@ function probeHost(hostname) {
 }
 
 function probe() {
-	probeHost(config.host).then(function(alive) {
+	probeHost(host).then(function(alive) {
 		let waitTime = waitTimeDefault;
 
 		if (!alive) {
-			publishDetailState("Ping failed");
 			if (deadCount < deadThreshold) {
 				deadCount++;
 			} else {
-				publishOverallState("Offline");
+				publishState({
+					online: false,
+					state: 3
+				});
 				deadCount = 0;
 				aliveCount = 0;
 				looksAliveTimestamp = 0;
 			}
+			publishState({
+				successfulPings: aliveCount,
+				successfulPingsThreshold: appearsAliveThreshold
+			});
 		} else {
-			publishDetailState("Ping succeeded");
 			aliveCount++;
+			publishState({
+				successfulPings: aliveCount,
+				successfulPingsThreshold: appearsAliveThreshold
+			});
 		}
-		let aliveCountState = `Alive count: ${aliveCount} | Dead count buffer: ${deadCount}/${deadThreshold}`;
-		debug(aliveCountState);
-		publishDetailState(aliveCountState);
+		if (debug.enabled) {
+			debug(`Alive count: ${aliveCount}/${appearsAliveThreshold} ` +
+				`| Dead count buffer: ${deadCount}/${deadThreshold}`);
+		}
 
 		if (aliveCount > appearsAliveThreshold) {
-			if (debug.enabled) {
-				let appearsOnlineState = "Appears online";
-				debug(appearsOnlineState);
-				publishOverallState(appearsOnlineState);
-			}
+			debug("Appears online");
 			if (!looksAliveTimestamp) {
 				debug("Setting timestamp");
+				publishState({
+					state: 2
+				});
 				looksAliveTimestamp = new Date().getTime();
 			}
 		}
@@ -69,38 +81,30 @@ function probe() {
 			let diff = timestamp - looksAliveTimestamp;
 
 			if (diff > isAliveTimespan) {
-				let onlineState = `Is online: ${diff / 1000 / 60}min passed without reset`;
-				debug(onlineState);
-				publishDetailState(onlineState);
-				publishOverallState("Online");
+				if (debug.enabled) {
+					debug(`Is online: ${diff / 1000 / 60}min passed without reset`);
+				}
+				publishState({
+					online: true,
+					state: 1
+				});
 				waitTime = waitTimeWhenOnline;
-			} else {
-				let assuranceState = `Appears online: assurance in ${(isAliveTimespan - diff) / 1000}sec...`;
-				debug(assuranceState);
-				publishDetailState(assuranceState);
+			} else if (debug.enabled) {
+				debug(`Appears online: assurance in ${(isAliveTimespan - diff) / 1000}sec...`);
 			}
 		}
 		setTimeout(probe, waitTime);
 	});
 }
 
-function publishOverallState(state) {
+function publishState(state) {
 	if (lastState === state) {
 		// Do not send same state repetitively
 		return;
 	}
 	lastState = state;
-	mqttClient.publish(config.overallTopic, state, {
-		qos: 2, // must arrive and must arrive exactly once - also ensures order
-		retain: true
-	});
-}
-
-function publishDetailState(state) {
-	if (!debug.enabled) {
-		return;
-	}
-	mqttClient.publish(config.detailTopic, state, {
+	const stateMsg = JSON.stringify(state);
+	mqttClient.publish(mqttTopic, stateMsg, {
 		qos: 2 // must arrive and must arrive exactly once - also ensures order
 	});
 }
