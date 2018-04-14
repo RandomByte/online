@@ -1,5 +1,5 @@
 # mqtt-online-check
-Check for internet connectivity and send changes (Online/Offline) to an MQTT broker.
+Check for internet connectivity publish status changes via MQTT.
 
 Might not be the best solution for this problem, but my provider does strange things with my connection.
 

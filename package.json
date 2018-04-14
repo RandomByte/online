@@ -1,7 +1,7 @@
 {
   "name": "mqtt-online-check",
   "version": "2.0.0",
-  "description": "Check for internet connectivity and send changes (Online/Offline) to an MQTT broker",
+  "description": "Check for internet connectivity publish status changes via MQTT",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
