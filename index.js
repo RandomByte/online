@@ -54,8 +54,9 @@ function probe() {
 				successfulPings: aliveCount,
 				successfulPingsThreshold: appearsAliveThreshold
 			});
-		} else {
+		} else if (aliveCount <= appearsAliveThreshold) {
 			aliveCount++;
+
 			publishState({
 				successfulPings: aliveCount,
 				successfulPingsThreshold: appearsAliveThreshold
@@ -97,15 +98,18 @@ function probe() {
 	});
 }
 
-function publishState(state) {
-	if (lastState === state) {
-		// Do not send same state repetitively
-		return;
+function publishState(stateMsg) {
+	if (stateMsg.state) {
+		if (lastState === stateMsg.state) {
+			// Do not send same state repetitively
+			return;
+		}
+		lastState = stateMsg.state;
 	}
-	lastState = state;
-	const stateMsg = JSON.stringify(state);
-	mqttClient.publish(mqttTopic, stateMsg, {
-		qos: 2 // must arrive and must arrive exactly once - also ensures order
+	const msg = JSON.stringify(stateMsg);
+	mqttClient.publish(mqttTopic, msg, {
+		qos: 2, // must arrive and must arrive exactly once - also ensures order
+		retain: true
 	});
 }
 

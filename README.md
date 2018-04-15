@@ -51,7 +51,7 @@ If two state messages contain the same value of `successfulPings`, this indicate
 
 ````json
 {
-    "successfulPings": 56,
+    "successfulPings": 8,
     "successfulPingsThreshold": 10
 }
 ````
