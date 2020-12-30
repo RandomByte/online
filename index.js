@@ -25,11 +25,11 @@ async function probe() {
 
 	if (online) {
 		console.log("Online");
-		publishConnectivity("Online");
+		publishConnectivity("1");
 		setTimeout(probe, defaultInterval);
 	} else {
 		console.log("Offline");
-		publishConnectivity("Online");
+		publishConnectivity("0");
 		setTimeout(probe, offlineInterval);
 	}
 }

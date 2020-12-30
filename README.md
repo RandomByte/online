@@ -33,8 +33,8 @@ npm start
 
 | Topic        | Payload
 | ------------- |-------------|
-| `Home/Internet/Connectivity` | `Online` |
-| `Home/Internet/Connectivity` | `Offline` |
+| `Home/Internet/Connectivity` | `1` (online) |
+| `Home/Internet/Connectivity` | `0` (offline) |
 
 ## License
 Released under the [MIT License](https://opensource.org/licenses/MIT).
