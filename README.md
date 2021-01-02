@@ -1,7 +1,7 @@
 # mqtt-online-check
 Check for internet connectivity and publish the status via MQTT.
 
-Makes use of [is-online](https://github.com/sindresorhus/is-online). A future enhancement might be to integrate regular speed tests.
+Makes use of [is-online](https://github.com/sindresorhus/is-online).
 
 ## Usage
 mqtt-traffic can be configured using environment variables:
