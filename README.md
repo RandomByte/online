@@ -8,6 +8,7 @@ mqtt-traffic can be configured using environment variables:
 
 - **MQTT_ONLINE_CHECK_MQTT_BROKER:** URL of your MQTT broker, e.g. `mqtt://test.mosquitto.org`
 - **MQTT_ONLINE_CHECK_MQTT_TOPIC_PREFIX:** MQTT topic prefix to publish states on, e.g. `Home/Internet/`
+- **MQTT_ONLINE_CHECK_MQTT_ERROR_TOPIC:** *(optional)* MQTT topic to publish error messages on, e.g. `Error/OnlineCheck`
 
 ## Docker Image
 A Docker image for the **armhf** architecture (Raspberry Pi et al.) is available on [Docker Hub](https://hub.docker.com/r/randombyte/armhf-mqtt-online-check).
@@ -19,6 +20,7 @@ A Docker image for the **armhf** architecture (Raspberry Pi et al.) is available
 docker run --rm -it \
 -e MQTT_ONLINE_CHECK_MQTT_BROKER="mqtt://test.mosquitto.org" \
 -e MQTT_ONLINE_CHECK_MQTT_TOPIC_PREFIX="Home/Internet/" \
+-e MQTT_ONLINE_CHECK_MQTT_ERROR_TOPIC="Error/OnlineCheck" \
 randombyte/armhf-mqtt-online-check:latest
 ````
 
@@ -26,6 +28,7 @@ randombyte/armhf-mqtt-online-check:latest
 ````sh
 MQTT_ONLINE_CHECK_MQTT_BROKER="mqtt://test.mosquitto.org" \
 MQTT_ONLINE_CHECK_MQTT_TOPIC_PREFIX="Home/Internet/" \
+MQTT_ONLINE_CHECK_MQTT_ERROR_TOPIC="Error/OnlineCheck" \
 npm start
 ````
 
