@@ -2,14 +2,15 @@ const mqtt = require("mqtt");
 const isOnline = require("is-online");
 
 const mqttBroker = process.env.MQTT_ONLINE_CHECK_MQTT_BROKER;
-
-// Remove any trailing slash from topic prefix because we can
-const mqttTopicPrefix = process.env.MQTT_ONLINE_CHECK_MQTT_TOPIC_PREFIX.replace(/\/$/, "");
+let mqttTopicPrefix = process.env.MQTT_ONLINE_CHECK_MQTT_TOPIC_PREFIX;
 
 if (!mqttBroker || !mqttTopicPrefix) {
 	console.log("Configuration environment variable(s) missing");
 	process.exit(1);
 }
+
+// Remove any trailing slash from topic prefix because we can
+mqttTopicPrefix = mqttTopicPrefix.replace(/\/$/, "");
 
 const defaultInterval = 60000 * 5; // 5 min
 const offlineInterval = 10000; // 10 sec
