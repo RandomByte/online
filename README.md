@@ -7,7 +7,7 @@ Makes use of [is-online](https://github.com/sindresorhus/is-online).
 mqtt-traffic can be configured using environment variables:
 
 - **MQTT_ONLINE_CHECK_MQTT_BROKER:** URL of your MQTT broker, e.g. `mqtt://test.mosquitto.org`
-- **MQTT_ONLINE_CHECK_MQTT_TOPIC_PREFIX:** MQTT topic prefix to publish states on, e.g. `Home/Internet/`
+- **MQTT_ONLINE_CHECK_MQTT_TOPIC:** MQTT topic to publish the state on, e.g. `Internet/Connectivity`
 
 ## Docker Image
 A Docker image for the **armhf** architecture (Raspberry Pi et al.) is available on [Docker Hub](https://hub.docker.com/r/randombyte/armhf-mqtt-online-check).
@@ -18,14 +18,14 @@ A Docker image for the **armhf** architecture (Raspberry Pi et al.) is available
 ````sh
 docker run --rm -it \
 -e MQTT_ONLINE_CHECK_MQTT_BROKER="mqtt://test.mosquitto.org" \
--e MQTT_ONLINE_CHECK_MQTT_TOPIC_PREFIX="Home/Internet/" \
+-e MQTT_ONLINE_CHECK_MQTT_TOPIC="Internet/Connectivity" \
 randombyte/armhf-mqtt-online-check:latest
 ````
 
 ### Option 2: Source
 ````sh
 MQTT_ONLINE_CHECK_MQTT_BROKER="mqtt://test.mosquitto.org" \
-MQTT_ONLINE_CHECK_MQTT_TOPIC_PREFIX="Home/Internet/" \
+MQTT_ONLINE_CHECK_MQTT_TOPIC="Internet/Connectivity" \
 npm start
 ````
 
@@ -33,8 +33,8 @@ npm start
 
 | Topic        | Payload
 | ------------- |-------------|
-| `Home/Internet/Connectivity` | `1` (online) |
-| `Home/Internet/Connectivity` | `0` (offline) |
+| `Internet/Connectivity` | `1` (online) |
+| `Internet/Connectivity` | `0` (offline) |
 
 ## License
 Released under the [MIT License](https://opensource.org/licenses/MIT).

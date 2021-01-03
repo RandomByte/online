@@ -10,6 +10,6 @@ RUN npm install --only=production
 COPY ./index.js .
 
 ENV MQTT_ONLINE_CHECK_MQTT_BROKER=
-ENV MQTT_ONLINE_CHECK_MQTT_TOPIC_PREFIX=
+ENV MQTT_ONLINE_CHECK_MQTT_TOPIC=
 
 CMD [ "npm", "start" ]
