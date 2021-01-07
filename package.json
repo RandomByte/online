@@ -1,6 +1,6 @@
 {
   "name": "mqtt-online-check",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "Check for internet connectivity publish status changes via MQTT",
   "main": "index.js",
   "scripts": {
