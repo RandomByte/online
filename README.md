@@ -10,7 +10,7 @@ mqtt-traffic can be configured using environment variables:
 - **MQTT_ONLINE_CHECK_MQTT_TOPIC:** MQTT topic to publish the state on, e.g. `Internet/Connectivity`
 
 ## Docker Image
-A Docker image for the **armhf** architecture (Raspberry Pi et al.) is available on [Docker Hub](https://hub.docker.com/r/randombyte/armhf-mqtt-online-check).
+A Docker image for the **armhf** architecture (Raspberry Pi et al.) is available on [Docker Hub](https://hub.docker.com/r/randombyte/mqtt-online-check).
 
 ## Example
 
@@ -19,7 +19,7 @@ A Docker image for the **armhf** architecture (Raspberry Pi et al.) is available
 docker run --rm -it \
 -e MQTT_ONLINE_CHECK_MQTT_BROKER="mqtt://test.mosquitto.org" \
 -e MQTT_ONLINE_CHECK_MQTT_TOPIC="Internet/Connectivity" \
-randombyte/armhf-mqtt-online-check:latest
+randombyte/mqtt-online-check:latest
 ````
 
 ### Option 2: Source
